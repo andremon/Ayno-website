@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ayno — Verktøy for norske bedrifter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --indigo: #6366f1;
+  --indigo-light: #818cf8;
+  --indigo-dim: #6366f120;
+  --emerald: #34d399;
+  --obsidian: #080810;
+  --surface: #0f0f1a;
+  --surface2: #16162a;
+  --border: #ffffff0f;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #475569;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--obsidian);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── NOISE TEXTURE ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
+
+/* ── HEADER ── */
+header{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:64px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--obsidian) 60%,transparent);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:#fff;letter-spacing:-.5px;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--indigo-light)}
+nav{display:flex;align-items:center;gap:6px}
+nav a{color:var(--text2);text-decoration:none;font-size:13px;padding:7px 14px;border-radius:8px;transition:all .2s}
+nav a:hover{color:var(--text);background:var(--border)}
+.nav-admin{background:var(--indigo-dim);color:var(--indigo-light)!important;border:1px solid #6366f130}
+.nav-admin:hover{background:#6366f125!important}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 24px 60px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,#6366f118,transparent 70%),radial-gradient(ellipse 50% 40% at 80% 80%,#34d39908,transparent 60%);pointer-events:none}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 80%);pointer-events:none;opacity:.5}
+.hero-content{position:relative;z-index:1;max-width:720px}
+.hero-label{display:inline-flex;align-items:center;gap:8px;background:var(--indigo-dim);border:1px solid #6366f130;border-radius:20px;padding:6px 16px;font-size:12px;color:var(--indigo-light);font-weight:500;margin-bottom:28px;letter-spacing:.5px;text-transform:uppercase}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(42px,7vw,80px);line-height:1.05;letter-spacing:-2px;color:#fff;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--indigo-light)}
+.hero p{font-size:18px;color:var(--text2);line-height:1.7;max-width:520px;margin:0 auto 36px;font-weight:300}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--indigo);color:white;border:none;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+.btn-primary:hover{background:#5558e0;transform:translateY(-1px);box-shadow:0 8px 32px #6366f140}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);padding:14px 28px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .2s}
+.btn-ghost:hover{border-color:#ffffff30;color:var(--text)}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text3);font-size:11px;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ── APPS SECTION ── */
+.apps-section{position:relative;z-index:1;padding:100px 40px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;color:var(--indigo-light);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(28px,4vw,42px);letter-spacing:-1px;color:#fff;margin-bottom:14px}
+.section-sub{font-size:16px;color:var(--text2);line-height:1.6;max-width:480px;margin-bottom:56px}
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.app-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden;transition:all .3s;display:flex;flex-direction:column}
+.app-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,var(--indigo-dim),transparent 60%);pointer-events:none;opacity:0;transition:opacity .3s}
+.app-card:hover{border-color:#6366f130;transform:translateY(-2px);box-shadow:0 16px 48px #00000040}
+.app-card:hover::before{opacity:1}
+.app-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px;flex-shrink:0}
+.app-tag{display:inline-flex;align-items:center;gap:5px;background:#ffffff08;border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;font-family:'DM Mono',monospace}
+.app-name{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:#fff;margin-bottom:8px;letter-spacing:-.3px}
+.app-desc{font-size:14px;color:var(--text2);line-height:1.6;flex:1;margin-bottom:20px}
+.app-meta{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.meta-chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.app-download{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#ffffff06;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-decoration:none;color:var(--text);transition:all .2s}
+.app-download:hover{background:var(--indigo-dim);border-color:#6366f140;color:var(--indigo-light)}
+.app-download .dl-info{font-size:13px;font-weight:500}
+.app-download .dl-sub{font-size:11px;color:var(--text3);margin-top:2px;font-family:'DM Mono',monospace}
+.app-download .dl-icon{font-size:18px;flex-shrink:0}
+.app-coming{display:flex;align-items:center;justify-content:center;gap:8px;background:#ffffff04;border:1px dashed var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--text3)}
+
+/* ── EMPTY SLOT ── */
+.app-slot{background:transparent;border:1px dashed #ffffff0a;border-radius:16px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:220px;opacity:.4}
+.app-slot .slot-icon{font-size:28px;margin-bottom:10px;opacity:.4}
+.app-slot p{font-size:13px;color:var(--text3)}
+
+/* ── ABOUT ── */
+.about-section{position:relative;z-index:1;padding:80px 40px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface)}
+.about-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.about-text h2{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(24px,3.5vw,36px);letter-spacing:-1px;color:#fff;margin-bottom:16px}
+.about-text p{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:14px}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.about-stat{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:20px}
+.about-stat .num{font-family:'Syne',sans-serif;font-weight:800;font-size:32px;color:var(--indigo-light);letter-spacing:-1px}
+.about-stat .lbl{font-size:12px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── FOOTER ── */
+footer{position:relative;z-index:1;padding:40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+footer .logo{font-size:17px}
+footer p{font-size:12px;color:var(--text3)}
+footer a{color:var(--text3);text-decoration:none;font-size:12px}.footer a:hover{color:var(--text2)}
+
+/* ── ADMIN PANEL ── */
+#adminPanel{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;overflow-y:auto}
+.admin-wrap{max-width:860px;margin:0 auto;padding:40px 24px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.admin-header h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:#fff}
+.admin-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.admin-card h3{font-size:13px;font-weight:600;color:var(--indigo-light);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group textarea,.form-group select{padding:10px 14px;background:#1a1a2e;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;width:100%}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--indigo)}
+.form-group textarea{resize:vertical;line-height:1.5;min-height:80px}
+.admin-save{background:var(--indigo);color:white;border:none;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.admin-save:hover{opacity:.85}
+.admin-close{background:#1e293b;border:1px solid #334155;color:var(--text2);padding:9px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
+.app-list-admin{display:flex;flex-direction:column;gap:10px}
+.app-item-admin{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px}
+.app-item-admin .aname{font-weight:600;font-size:14px;flex:1}
+.app-item-admin .aslug{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
+.app-item-admin .del-btn{background:none;border:1px solid #ef444430;color:#f87171;padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
+.app-item-admin .edit-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
+.login-bar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.login-bar h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:14px}
+.login-row{display:flex;gap:10px;align-items:flex-end}
+.login-row .form-group{flex:1}
+#adminStatus{font-size:12px;margin-top:8px;min-height:16px}
+.tag-select{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.tag-opt{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text3);font-family:inherit;transition:all .2s}
+.tag-opt.sel{background:var(--indigo-dim);border-color:#6366f150;color:var(--indigo-light)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">ayno<span>.</span></div>
+  <nav>
+    <a href="#apps">Apper</a>
+    <a href="#om">Om oss</a>
+    <a href="https://sms.ay.no" target="_blank">SMS Gateway</a>
+    <a href="#" class="nav-admin" id="openAdminBtn">⚙️ Rediger</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">🇳🇴 Norske verktøy for norske bedrifter</div>
+    <h1>Verktøy som<br><em>faktisk virker</em></h1>
+    <p>Enkle, pålitelige løsninger for bedrifter som vil bruke tid på det som teller — ikke på teknologi.</p>
+    <div class="hero-cta">
+      <a href="#apps" class="btn-primary">Se alle apper ↓</a>
+      <a href="https://sms.ay.no" target="_blank" class="btn-ghost">SMS Gateway →</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    Scroll
+  </div>
+</section>
+
+<!-- APPS -->
+<section class="apps-section" id="apps">
+  <div class="section-label">Nedlastinger</div>
+  <h2 class="section-title">Apper og verktøy</h2>
+  <p class="section-sub">Klikk for å laste ned direkte til din enhet.</p>
+  <div class="apps-grid" id="appsGrid">
+    <!-- Fylles av JS -->
+  </div>
+</section>
+
+<!-- OM OSS -->
+<section class="about-section" id="om">
+  <div class="about-inner">
+    <div class="about-text">
+      <div class="section-label" style="margin-bottom:12px">Om Ayno</div>
+      <h2>Norsk teknologi — uten unødvendig kompleksitet</h2>
+      <p>Vi bygger løsninger for norske bedrifter som er enkle å ta i bruk, pålitelige i drift og lette å forstå.</p>
+      <p>Alle våre tjenester driftes innenfor Europa og er tilpasset norske behov.</p>
+      <a href="mailto:post@ay.no" class="btn-ghost" style="display:inline-flex;margin-top:12px">Kontakt oss →</a>
+    </div>
+    <div class="about-stats">
+      <div class="about-stat"><div class="num">100%</div><div class="lbl">Norsk driftet</div></div>
+      <div class="about-stat"><div class="num">EU</div><div class="lbl">Datalagring</div></div>
+      <div class="about-stat"><div class="num">24/7</div><div class="lbl">Tilgjengelighet</div></div>
+      <div class="about-stat"><div class="num">0</div><div class="lbl">Unødvendig kompleksitet</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">ayno<span>.</span></div>
+  <p>© 2025 Ayno · ay.no · post@ay.no</p>
+  <div style="display:flex;gap:16px">
+    <a href="https://sms.ay.no" target="_blank">SMS Gateway</a>
+  </div>
+</footer>
+
+<!-- ══ ADMIN PANEL ═══════════════════════════════════════════════ -->
+<div id="adminPanel">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <h2>⚙️ Rediger innhold</h2>
+      <div style="display:flex;gap:8px">
+        <button class="admin-close" id="closeAdminBtn">Lukk</button>
+      </div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="login-bar" id="adminLogin">
+      <h3>🔑 Logg inn for å redigere</h3>
+      <div class="login-row">
+        <div class="form-group"><label>Passord</label><input type="password" id="adminPwd" placeholder="Admin-passord"></div>
+        <button class="admin-save" id="adminLoginBtn">Logg inn</button>
+      </div>
+      <div id="adminStatus"></div>
+    </div>
+
+    <!-- REDIGER SEKSJONER (skjult til innlogging) -->
+    <div id="adminContent" style="display:none">
+
+      <!-- APP-LISTE -->
+      <div class="admin-card">
+        <h3>📱 Apper — nåværende</h3>
+        <div class="app-list-admin" id="adminAppList"></div>
+      </div>
+
+      <!-- LEGG TIL / REDIGER APP -->
+      <div class="admin-card">
+        <h3>➕ Legg til / rediger app</h3>
+        <input type="hidden" id="editingId">
+        <div class="form-row">
+          <div class="form-group"><label>App-navn *</label><input type="text" id="fName" placeholder="F.eks. SMS Gateway"></div>
+          <div class="form-group"><label>Emoji-ikon</label><input type="text" id="fIcon" placeholder="📱" maxlength="2" style="font-size:24px;text-align:center"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Plattform-merke</label>
+            <div class="tag-select" id="tagSelect">
+              <button class="tag-opt" data-val="Android">Android</button>
+              <button class="tag-opt" data-val="iOS">iOS</button>
+              <button class="tag-opt" data-val="Windows">Windows</button>
+              <button class="tag-opt" data-val="macOS">macOS</button>
+              <button class="tag-opt" data-val="Web">Web</button>
+              <button class="tag-opt" data-val="PowerShell">PowerShell</button>
+            </div>
+          </div>
+          <div class="form-group"><label>Versjon</label><input type="text" id="fVersion" placeholder="v1.0"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Filstørrelse</label><input type="text" id="fSize" placeholder="F.eks. 8.2 MB"></div>
+          <div class="form-group"><label>Status</label>
+            <select id="fStatus">
+              <option value="download">Tilgjengelig for nedlasting</option>
+              <option value="coming">Kommer snart</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group full" style="margin-bottom:12px"><label>Beskrivelse *</label><textarea id="fDesc" placeholder="Kort beskrivelse av hva appen gjør..."></textarea></div>
+        <div class="form-group full" style="margin-bottom:16px"><label>Nedlastings-URL (GitHub raw link eller direkte URL)</label><input type="url" id="fUrl" placeholder="https://raw.githubusercontent.com/..."></div>
+        <div style="display:flex;gap:10px">
+          <button class="admin-save" id="saveAppBtn">Lagre app</button>
+          <button class="admin-close" id="cancelEditBtn" style="display:none">Avbryt</button>
+        </div>
+        <div id="saveStatus" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+      </div>
+
+      <!-- HERO-TEKST -->
+      <div class="admin-card">
+        <h3>✏️ Rediger hero-tekst</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Fremhevet tekst (i kursiv)</label><input type="text" id="fHeroEm" placeholder="faktisk virker"></div>
+          <div class="form-group"><label>Hero-undertittel</label><input type="text" id="fHeroSub" placeholder="Kort setning..."></div>
+        </div>
+        <button class="admin-save" id="saveHeroBtn">Lagre hero</button>
+      </div>
+
+      <button class="admin-close" style="width:100%;margin-top:8px" id="logoutBtn">Logg ut</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══════════════════════════════════════════════════════════
+// Standard apps — rediger disse direkte i koden
+// eller via admin-panelet (lagres i localStorage)
+var DEFAULT_APPS = [
+  {
+    id: 'sms-gateway',
+    name: 'SMS Gateway',
+    icon: '📡',
+    tag: 'Android',
+    version: 'v5.0',
+    size: '8.2 MB',
+    desc: 'Gjør en Android-telefon om til en SMS-gateway for bedriften. Kobles til Ayno Connect og sender/mottar SMS på vegne av kundene dine.',
+    url: 'https://raw.githubusercontent.com/DITT-REPO/releases/main/sms-gateway.apk',
+    status: 'download'
+  }
+];
+
+var ADMIN_PASSWORD = 'ayno2025'; // Endre dette
+var adminLoggedIn = false;
+var selectedTag = '';
+var editingId = null;
+
+// ══ APPS RENDERING ════════════════════════════════════════════════
+function getApps() {
+  try {
+    var stored = localStorage.getItem('ayno_apps');
+    return stored ? JSON.parse(stored) : DEFAULT_APPS;
+  } catch(e) { return DEFAULT_APPS; }
+}
+
+function saveApps(apps) {
+  localStorage.setItem('ayno_apps', JSON.stringify(apps));
+}
+
+function renderApps() {
+  var apps = getApps();
+  var grid = document.getElementById('appsGrid');
+  if (!apps.length) {
+    grid.innerHTML = '<div class="app-slot"><div class="slot-icon">📦</div><p>Ingen apper ennå</p></div>';
+    return;
+  }
+  grid.innerHTML = apps.map(function(app) {
+    var iconBg = {
+      'Android': 'linear-gradient(135deg,#34d39930,#34d39910)',
+      'iOS': 'linear-gradient(135deg,#60a5fa30,#60a5fa10)',
+      'Windows': 'linear-gradient(135deg,#818cf830,#818cf810)',
+      'macOS': 'linear-gradient(135deg,#f4a26130,#f4a26110)',
+      'Web': 'linear-gradient(135deg,#a78bfa30,#a78bfa10)',
+      'PowerShell': 'linear-gradient(135deg,#38bdf830,#38bdf810)'
+    }[app.tag] || 'linear-gradient(135deg,#6366f130,#6366f110)';
+
+    var dlSection = app.status === 'coming'
+      ? '<div class="app-coming">🔔 Kommer snart</div>'
+      : '<a href="' + app.url + '" class="app-download" download>' +
+          '<div><div class="dl-info">Last ned ' + escHtml(app.name) + '</div>' +
+          '<div class="dl-sub">' + (app.tag || '') + (app.version ? ' · ' + app.version : '') + (app.size ? ' · ' + app.size : '') + '</div></div>' +
+          '<div class="dl-icon">↓</div>' +
+        '</a>';
+
+    return '<div class="app-card">' +
+      '<div class="app-icon" style="background:' + iconBg + '">' + (app.icon || '📦') + '</div>' +
+      (app.tag ? '<div class="app-tag">' + escHtml(app.tag) + (app.version ? ' · ' + escHtml(app.version) : '') + '</div>' : '') +
+      '<div class="app-name">' + escHtml(app.name) + '</div>' +
+      '<div class="app-desc">' + escHtml(app.desc) + '</div>' +
+      (app.size ? '<div class="app-meta"><span class="meta-chip">📦 ' + escHtml(app.size) + '</span></div>' : '') +
+      dlSection +
+    '</div>';
+  }).join('') +
+  // Tom plass-slot
+  '<div class="app-slot"><div class="slot-icon">+</div><p>Flere apper på vei</p></div>';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══ ADMIN PANEL ═══════════════════════════════════════════════════
+document.getElementById('openAdminBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('adminPanel').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  if (adminLoggedIn) { renderAdminAppList(); loadHeroForm(); }
+});
+
+document.getElementById('closeAdminBtn').addEventListener('click', closeAdmin);
+
+function closeAdmin() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('adminLoginBtn').addEventListener('click', function() {
+  var pwd = document.getElementById('adminPwd').value;
+  var st = document.getElementById('adminStatus');
+  if (pwd === ADMIN_PASSWORD) {
+    adminLoggedIn = true;
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    renderAdminAppList();
+    loadHeroForm();
+    st.textContent = '';
+  } else {
+    st.style.color = '#f87171'; st.textContent = '✕ Feil passord';
+  }
+});
+document.getElementById('adminPwd').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') document.getElementById('adminLoginBtn').click();
+});
+
+document.getElementById('logoutBtn').addEventListener('click', function() {
+  adminLoggedIn = false;
+  document.getElementById('adminLogin').style.display = 'block';
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminPwd').value = '';
+});
+
+// Tag select
+document.querySelectorAll('.tag-opt').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.tag-opt').forEach(function(b) { b.classList.remove('sel'); });
+    this.classList.add('sel');
+    selectedTag = this.getAttribute('data-val');
+  });
+});
+
+function renderAdminAppList() {
+  var apps = getApps();
+  var el = document.getElementById('adminAppList');
+  if (!apps.length) { el.innerHTML = '<div style="color:#475569;font-size:13px;padding:8px">Ingen apper ennå.</div>'; return; }
+  el.innerHTML = apps.map(function(app) {
+    return '<div class="app-item-admin">' +
+      '<div style="font-size:20px">' + (app.icon||'📦') + '</div>' +
+      '<div style="flex:1"><div class="aname">' + escHtml(app.name) + '</div>' +
+      '<div class="aslug">' + (app.tag||'') + (app.version?' · '+app.version:'') + (app.status==='coming'?' · Kommer snart':'') + '</div></div>' +
+      '<button class="edit-btn" onclick="startEdit(\'' + app.id + '\')">✏️ Rediger</button>' +
+      '<button class="del-btn" onclick="deleteApp(\'' + app.id + '\')">Slett</button>' +
+    '</div>';
+  }).join('');
+}
+
+function startEdit(id) {
+  var apps = getApps();
+  var app = apps.find(function(a) { return a.id === id; });
+  if (!app) return;
+  editingId = id;
+  document.getElementById('editingId').value = id;
+  document.getElementById('fName').value = app.name || '';
+  document.getElementById('fIcon').value = app.icon || '';
+  document.getElementById('fVersion').value = app.version || '';
+  document.getElementById('fSize').value = app.size || '';
+  document.getElementById('fDesc').value = app.desc || '';
+  document.getElementById('fUrl').value = app.url || '';
+  document.getElementById('fStatus').value = app.status || 'download';
+  selectedTag = app.tag || '';
+  document.querySelectorAll('.tag-opt').forEach(function(b) {
+    b.classList.toggle('sel', b.getAttribute('data-val') === selectedTag);
+  });
+  document.getElementById('cancelEditBtn').style.display = '';
+  document.getElementById('saveStatus').textContent = '';
+  document.querySelector('.admin-card:nth-of-type(2) h3').textContent = '✏️ Rediger — ' + app.name;
+  document.getElementById('saveAppBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+document.getElementById('cancelEditBtn').addEventListener('click', function() {
+  editingId = null;
+  document.getElementById('editingId').value = '';
+  ['fName','fIcon','fVersion','fSize','fDesc','fUrl'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('fStatus').value = 'download';
+  document.querySelectorAll('.tag-opt').forEach(function(b) { b.classList.remove('sel'); });
+  selectedTag = '';
+  this.style.display = 'none';
+  document.querySelector('.admin-card:nth-of-type(2) h3').textContent = '➕ Legg til / rediger app';
+});
+
+document.getElementById('saveAppBtn').addEventListener('click', function() {
+  var name = document.getElementById('fName').value.trim();
+  var desc = document.getElementById('fDesc').value.trim();
+  var st = document.getElementById('saveStatus');
+  if (!name) { st.style.color='#f87171'; st.textContent='✕ Navn er påkrevd'; return; }
+  var apps = getApps();
+  var newApp = {
+    id: editingId || ('app-' + Date.now()),
+    name: name,
+    icon: document.getElementById('fIcon').value.trim() || '📦',
+    tag: selectedTag,
+    version: document.getElementById('fVersion').value.trim(),
+    size: document.getElementById('fSize').value.trim(),
+    desc: desc,
+    url: document.getElementById('fUrl').value.trim(),
+    status: document.getElementById('fStatus').value
+  };
+  if (editingId) {
+    var idx = apps.findIndex(function(a) { return a.id === editingId; });
+    if (idx !== -1) apps[idx] = newApp;
+  } else {
+    apps.push(newApp);
+  }
+  saveApps(apps);
+  renderApps();
+  renderAdminAppList();
+  st.style.color = '#34d399'; st.textContent = '✓ Lagret!';
+  document.getElementById('cancelEditBtn').click();
+  setTimeout(function() { st.textContent = ''; }, 3000);
+});
+
+function deleteApp(id) {
+  if (!confirm('Slett denne appen?')) return;
+  var apps = getApps().filter(function(a) { return a.id !== id; });
+  saveApps(apps);
+  renderApps();
+  renderAdminAppList();
+}
+
+// Hero-redigering
+function loadHeroForm() {
+  try {
+    var hero = JSON.parse(localStorage.getItem('ayno_hero') || '{}');
+    document.getElementById('fHeroEm').value = hero.em || 'faktisk virker';
+    document.getElementById('fHeroSub').value = hero.sub || '';
+  } catch(e) {}
+}
+
+document.getElementById('saveHeroBtn').addEventListener('click', function() {
+  var em = document.getElementById('fHeroEm').value.trim();
+  var sub = document.getElementById('fHeroSub').value.trim();
+  localStorage.setItem('ayno_hero', JSON.stringify({ em: em, sub: sub }));
+  applyHero();
+  this.textContent = '✓ Lagret!'; var btn = this;
+  setTimeout(function() { btn.textContent = 'Lagre hero'; }, 2000);
+});
+
+function applyHero() {
+  try {
+    var hero = JSON.parse(localStorage.getItem('ayno_hero') || '{}');
+    if (hero.em) document.querySelector('.hero h1 em').textContent = hero.em;
+    if (hero.sub) document.querySelector('.hero p').textContent = hero.sub;
+  } catch(e) {}
+}
+
+// ══ INIT ═══════════════════════════════════════════════════════════
+renderApps();
+applyHero();
+</script>
+</body>
+</html>
